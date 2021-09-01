@@ -6,7 +6,7 @@ from src.data import VeridicalDataset
 from src.herbert_classfier import HerBERTClassifier
 
 BATCH_SIZE = 32
-N_EPOCHS = 10
+N_EPOCHS = 20
 text_col='T PL'
 y_col='GOLD <T,H>'
 
@@ -49,3 +49,5 @@ dev_dataloader = DataLoader(
 ### Train model
 classifier = HerBERTClassifier(num_labels=len(labels_))
 classifier.train(train_dataloader, val_dataloader=dev_dataloader, n_epochs=N_EPOCHS, lr=1e-5)
+print("\nTEST")
+classifier.predict(test_dataloader)

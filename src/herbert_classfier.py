@@ -25,7 +25,7 @@ class HerBERTClassifier():
         )
         self.num_labels = num_labels
 
-    def train(self, train_dataloader, val_dataloader=None, n_epochs=10, lr=1e-5):
+    def train(self, train_dataloader, val_dataloader=None, n_epochs=10, lr=1e-5, file_name=None):
         
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(device)
@@ -79,13 +79,15 @@ class HerBERTClassifier():
                         y_pred.extend(y_pred_)
                         
                 print(f"Val Loss: {val_loss/(batch_idx + 1)} ACC: {accuracy_score(y_true, y_pred)}")
-
-        torch.save(self, f"herbert_{n_epochs}_{datetime.today().strftime('%Y-%m-%d-%H:%M:%S')}")
+        if file_name is None:
+            torch.save(self, f"herbert_{n_epochs}_{datetime.today().strftime('%Y-%m-%d-%H:%M:%S')}")
+        else:
+            torch.save(self, file_name)
 
     def predict(self, data_loader):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.eval()
-        y_true, y_pred = [], []
+        y_true, y_pred, embeddings = [], [], []
         for batch_idx, batch in enumerate(data_loader):
             with torch.no_grad():
                 b_input_ids, b_input_mask, b_token_type_ids, b_labels = [elem.to(device) for elem in batch]
@@ -96,8 +98,9 @@ class HerBERTClassifier():
                     token_type_ids=b_token_type_ids
                 )
                 logits = outputs[0]
+                embeddings.append(logits)
                 y_true.extend(b_labels.to('cpu').numpy())
                 y_pred_ = torch.argmax(logits, dim=-1).to('cpu').numpy()
                 y_pred.extend(y_pred_)
         print(f"Test ACC: {accuracy_score(y_true, y_pred)}")
-        return y_pred
+        return y_pred, y_true, embeddings

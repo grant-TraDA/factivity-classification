@@ -22,7 +22,7 @@ test_data_path = DATA_PATH.joinpath('test_data.csv')
 model_data = pd.read_excel(model_data_path, engine='openpyxl', na_values=['brak'])
 model_data.dropna(how='all', axis=0, inplace=True)
 model_data = model_data[model_data['GOLD <T,H>'].isin(['N', 'E', 'C'])]
-model_data = model_data[model_data['GOLD <T,H>'].isin(['NF', 'F'])]
+model_data = model_data[model_data['verb - factive/nonfactive'].isin(['NF', 'F'])]
 
 model_data = model_data[['T PL', 'H PL', 'verb', 'verb - main semantic class', 'verb - tense', 'verb - factive/nonfactive', 'complement - tense', 'T - negation', 'T - type of sentence', 'GOLD <T,H>']]
 model_data = model_data[~(model_data['GOLD <T,H>'].isna())]

@@ -27,6 +27,25 @@ model_data = model_data[model_data['verb - factive/nonfactive'].isin(['NF', 'F']
 model_data = model_data[['T PL', 'H PL', 'verb', 'verb - main semantic class', 'verb - tense', 'verb - factive/nonfactive', 'complement - tense', 'T - negation', 'T - type of sentence', 'GOLD <T,H>']]
 model_data = model_data[~(model_data['GOLD <T,H>'].isna())]
 
+model_data['T - negation'] = model_data['T - negation'].astype('bool')
+model_data['verb - factive/nonfactive'] = (model_data['verb - factive/nonfactive'] == "F").astype('bool')
+model_data['verb_cat'] = model_data['verb'].copy()
+
+for colname in [
+    'verb_cat',
+    'verb - main semantic class',
+    'verb - tense',
+    'complement - tense',
+    'T - type of sentence',
+    'GOLD <T,H>'
+    ]:
+    model_data[colname] = model_data[colname].astype('category')
+
+model_data = pd.get_dummies(
+    model_data, drop_first=True, dummy_na=True,
+    columns=['verb_cat', 'verb - main semantic class', 'verb - tense', 'complement - tense', 'T - type of sentence'])
+
+
 X_, X_test, y_, y_test = train_test_split(
 model_data.drop(labels='GOLD <T,H>', axis=1), model_data['GOLD <T,H>'], random_state=42,
     train_size=0.8, test_size=0.2, stratify=model_data['GOLD <T,H>'])

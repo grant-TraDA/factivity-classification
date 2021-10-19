@@ -18,10 +18,12 @@ def summarize_model_per_factive(y_pred, y_true, factive_ind):
     return result
 
 
-def plot_feature_importance(features, importances, save_path):
+def plot_feature_importance(features, importances, save_path, top_n=None):
     indices = np.argsort(importances)
+    if top_n:
+        indices = indices[-top_n:]
     plt.title('Impurity-based Feature Importances')
-    plt.barh(range(len(indices)), importances[indices], color='b', align='center')
+    plt.barh(range(len(indices)), importances[indices], color='#1e4585', align='center')
     plt.yticks(range(len(indices)), [features[i] for i in indices])
     plt.xlabel('Importance')
     plt.ylabel(None)

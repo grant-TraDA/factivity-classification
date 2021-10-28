@@ -10,7 +10,7 @@ def summarize_model_per_factive(y_pred, y_true, factive_ind):
         "factive_ind": factive_ind 
     })
     result["correct"] = (y_pred == y_true)
-    result.group_by(["y_true", "factive_ind"]).agg(
+    result = result.groupby(["y_true", "factive_ind"]).agg(
         n=("y_true", "count"),
         sum_correct=("correct", "sum"),
         acc=("correct", "mean"),

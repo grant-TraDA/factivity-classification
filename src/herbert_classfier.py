@@ -17,13 +17,16 @@ from datetime import datetime
 
 class HerBERTClassifier():
 
-    def __init__(self, num_labels):
+    def __init__(self, num_labels, id2label=None, label2id=None):
         
         self.model = AutoModelForSequenceClassification.from_pretrained(
             "allegro/herbert-klej-cased-v1",
             num_labels=num_labels
         )
         self.num_labels = num_labels
+        if id2label is not None:
+            self.model.config.id2label = id2label
+            self.model.config.label2id = label2id
 
     def train(self, train_dataloader, val_dataloader=None, n_epochs=10, lr=1e-5, file_name=None):
         
@@ -80,9 +83,9 @@ class HerBERTClassifier():
                         
                 print(f"Val Loss: {val_loss/(batch_idx + 1)} ACC: {accuracy_score(y_true, y_pred)}")
         if file_name is None:
-            torch.save(self, f"herbert_{n_epochs}_{datetime.today().strftime('%Y-%m-%d-%H:%M:%S')}")
+            self.model.save_pretrained(f"herbert_{n_epochs}_{datetime.today().strftime('%Y-%m-%d-%H:%M:%S')}")
         else:
-            torch.save(self, file_name)
+            self.model.save_pretrained(file_name)
 
     def predict(self, data_loader):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

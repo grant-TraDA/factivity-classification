@@ -6,7 +6,7 @@ with codecs.open("requirements.txt") as f:
     REQUIREMENTS = f.read().splitlines()
 
 setup(
-    name = "Polish NLI",
+    name = "src",
     version = "0.0.1",
     author = "Karolina Seweryn, Anna Wróblewska, Daniel Ziembicki",
     author_email = "karolina.seweryn@pw.edu.pl",

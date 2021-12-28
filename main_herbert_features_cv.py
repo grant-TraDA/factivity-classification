@@ -22,7 +22,6 @@ TEXT_COL= 'T PL' # 'verb' #
 N_EPOCHS = 13 # 10 #
 N_SPLITS = 10 
 
-
 DIR_PROJECT = Path(".").resolve()
 DIR_DATA = DIR_PROJECT.joinpath("data/17_10_2021")
 MODEL_DIR = DIR_PROJECT.joinpath("models")
@@ -77,7 +76,7 @@ for i, (train_index, test_index) in enumerate(skf.split(X, y)):
     
     train_df = pd.concat([df.loc[train_index, Y_COL].reset_index(drop=True), X_train.reset_index(drop=True), train_embeddings], 1)
     test_df = pd.concat([df.loc[test_index, Y_COL].reset_index(drop=True), X_test.reset_index(drop=True), test_embeddings], 1)
-    # ### Train model
+    # Train model
     classifier = Pipeline([
         ('model', MLPClassifier(random_state=123, learning_rate_init=LR, max_iter=4000, batch_size=BATCH_SIZE))
     ])

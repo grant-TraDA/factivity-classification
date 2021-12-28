@@ -13,7 +13,7 @@ MODEL_DIR = Path(".").resolve().joinpath("models")
 BATCH_SIZE = 32
 N_EPOCHS = 13
 LR = 1e-5
-text_col= 'T PL' # 'verb' #
+text_col= 'T PL' # 'verb'
 y_col='GOLD <T,H>'
 
 DIR_PROJECT = Path(".").resolve()
@@ -55,7 +55,7 @@ dev_dataloader = DataLoader(
     batch_size = BATCH_SIZE
 )
 
-### Train model
+# Train model
 classifier = HerBERTClassifier(num_labels=len(labels_))
 classifier.train(
     train_dataloader, val_dataloader=dev_dataloader, n_epochs=N_EPOCHS, lr=LR,
@@ -64,19 +64,3 @@ classifier.train(
 logging.info("\nTEST")
 y_pred, y_true, _ = classifier.predict(test_dataloader)
 logging.info(classification_report(y_true, y_pred, digits=4))
-
-
-# prediction on the entire dataset
-# df_data_path = DIR_DATA.joinpath("df.csv")
-# df = pd.read_csv(df_data_path)
-# df_ = [{'text': row[text_col], 'label': row[y_col]} for _, row in df.iterrows()]
-
-# df_dataloader = DataLoader(
-#     VeridicalDataset(df_, labels=labels_, label2id=label2id_, id2label=id2label_),
-#     shuffle=False,
-#     batch_size = BATCH_SIZE
-# )
-# y_pred, y_true, _ = classifier.predict(df_dataloader)
-# df['y_pred_herbert_sentence'] = [id2label_[elem] for elem in y_pred]
-
-# df.to_csv(df_data_path, index=False)

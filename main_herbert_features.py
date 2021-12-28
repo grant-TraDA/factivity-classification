@@ -46,7 +46,6 @@ id2label_ = {i:label for i, label in enumerate(labels_)}
 
 train_dataloader = DataLoader(
     VeridicalDataset(train_, labels=labels_, label2id=label2id_, id2label=id2label_),
-    #VeridicalDataset(train['T PL'], labels=train['GOLD <T,H>'], labels2id=None, id2label=None),
     shuffle=True,
     batch_size = BATCH_SIZE
 )
@@ -72,41 +71,16 @@ def transform_prediction(dataloader, model):
 train_embeddings = transform_prediction(train_dataloader, model)
 test_embeddings = transform_prediction(test_dataloader, model)
 
-# columns_model = [y_col, 'verb','verb - main semantic class','verb - tense','verb - factive/nonfactive','complement - tense','T - negation','T - type of sentence']
-# train = train[columns_model]
-# test = test[columns_model]
-    
-# cat_columns = ['verb - main semantic class', 'verb - tense', 'verb - factive/nonfactive', 'complement - tense', 'T - type of sentence']
-# for colname in cat_columns:
-#     if colname in train.columns:
-#         train[colname] = train[colname].astype('category')
-#         test[colname] = test[colname].astype('category')
-
-
 X_train = train.drop(labels=['GOLD <T,H>', 'verb', 'T PL','H PL'], axis=1)
 X_test = test.drop(labels=['GOLD <T,H>', 'verb', 'T PL','H PL'], axis=1)
-
-
-# one_hot = ColumnTransformer([
-#     ('trans', OneHotEncoder(handle_unknown="ignore"), cat_columns)
-# ], sparse_threshold=0)
-
-# train_one_hot = pd.DataFrame(one_hot.fit_transform(train), columns=one_hot.get_feature_names()) 
-# test_one_hot = pd.DataFrame(one_hot.transform(test), columns=one_hot.get_feature_names())
-
-# train = pd.concat([train['GOLD <T,H>'], train_one_hot, train_embeddings], 1)
-# test = pd.concat([test['GOLD <T,H>'], test_one_hot, test_embeddings], 1)
 train = pd.concat([train['GOLD <T,H>'], X_train, train_embeddings], 1)
 test = pd.concat([test['GOLD <T,H>'], X_test, test_embeddings], 1)
 
-
-
-# ### Train model
+# Train model
 classifier = Pipeline([
     ('model', MLPClassifier(random_state=123, learning_rate_init=LR, max_iter=4000, batch_size=BATCH_SIZE))
 ])
 classifier.fit(train.drop(labels=['GOLD <T,H>'], axis=1), train['GOLD <T,H>'])
-
 
 logging.info("\nTEST")
 y_pred = classifier.predict(test.drop(labels=['GOLD <T,H>'], axis=1))

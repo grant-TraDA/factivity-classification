@@ -30,7 +30,6 @@ logging.basicConfig(
 logging.info(f"\n\nDATE: {datetime.today().strftime('%Y-%m-%d-%H:%M:%S')}")
 
 train_ = pd.read_csv(DIR_DATA.joinpath("df.csv"))
-#train = train.loc[:, [Y_COL, TEXT_COL]]
 
 # Train model
 accuracies, f1_scores, c_f1_scores, e_f1_scores, n_f1_scores = [], [], [], [], []
